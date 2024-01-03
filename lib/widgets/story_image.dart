@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
-import '../utils.dart';
 import '../controller/story_controller.dart';
+import '../utils.dart';
 
 /// Utitlity to load image (gif, png, jpg, etc) media just once. Resource is
 /// cached to disk with default configurations of [DefaultCacheManager].
@@ -44,9 +44,11 @@ class ImageLoader {
 
         final imageBytes = fileResponse.file.readAsBytesSync();
 
+        ImmutableBuffer buffer = imageBytes as ImmutableBuffer;
+
         this.state = LoadState.success;
 
-        PaintingBinding.instance!.instantiateImageCodec(imageBytes).then(
+        PaintingBinding.instance.instantiateImageCodecWithSize(buffer).then(
             (codec) {
           this.frames = codec;
           onComplete();
